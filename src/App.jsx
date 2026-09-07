@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ArrowRight, Bot, ChevronRight, Eye, EyeOff, Gamepad2, Landmark, Lock, Mail, Menu, MessageCircle, ShieldCheck, ShoppingBag, Smartphone, User, X, Zap, KeyRound, CreditCard, Fish, TriangleAlert, Headphones, Search, Send } from 'lucide-react';
 
 const topics = [
