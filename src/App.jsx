@@ -71,4 +71,88 @@ function Assistant(){const welcome={role:'bot',text:'Hi! I am your Cyber Safety 
 function Contact(){return <Inner title="We are here to help."><div className="contact-grid"><article><Headphones/><h2>Immediate fraud support</h2><p>If you have lost money to a cyber fraud, call the National Cyber Crime Helpline as soon as possible.</p><strong>1930</strong></article><article><Mail/><h2>Support desk</h2><p>For campus awareness requests or general assistance, write to our community support team.</p><a href="mailto:support@cybersafety.edu">support@cybersafety.edu</a></article></div></Inner>}
 function Login(){const [show,setShow]=useState(false);const [mode,setMode]=useState('login');const [notice,setNotice]=useState('');const title=mode==='login'?'Welcome Back!':mode==='register'?'Create your account':'Reset your password';const submit=e=>{e.preventDefault();const data=new FormData(e.currentTarget);if(mode==='forgot'){setNotice(`A password-reset link would be sent to ${data.get('email')}. (Demo mode)`);return}if(mode==='register'){setNotice('Account created successfully. You can now log in.');setMode('login');return}localStorage.setItem('cyberUser',data.get('email'));localStorage.setItem('cyberLastLogin',new Date().toLocaleString());window.location.hash='/home'};return <main className="login-page"><section className="login-brand"><Logo light/><div className="brand-copy"><p className="eyebrow">STUDENT COMMUNITY</p><h1>Stay Safe. Stay Aware.<br/><span>We Are Here to Help.</span></h1><p>Your trusted platform for cyber safety guidance, awareness and reporting cyber crimes.</p></div><HeroArt/><div className="trust"><span><ShieldCheck/>100% Secure<small>Your data is safe with us.</small></span><span><Bot/>AI Powered<small>Instant answers and support.</small></span><span><User/>Trusted by<small>Students in the community.</small></span></div></section><section className="login-panel"><a className="back" href="#/home">← Back to home</a><div className="login-card"><h1>{title}</h1><p>{mode==='login'?'Login to continue to your Safety Dashboard':mode==='register'?'Join the student cyber safety community.':'Enter your email and we will help you reset your password.'}</p>{notice&&<div className="form-notice">{notice}</div>}<form onSubmit={submit}>{mode==='register'&&<label><User/><input required name="name" placeholder="Full name"/></label>}<label><User/><input required name="email" type="email" placeholder="Email address"/></label>{mode!=='forgot'&&<label><Lock/><input required name="password" type={show?'text':'password'} minLength="6" placeholder="Password"/><button type="button" onClick={()=>setShow(!show)}>{show?<EyeOff/>:<Eye/>}</button></label>}{mode==='login'&&<div className="remember"><label><input type="checkbox"/> Remember Me</label><button type="button" className="text-btn" onClick={()=>{setNotice('');setMode('forgot')}}>Forgot Password?</button></div>}<button className="login-btn"> <Lock size={19}/>{mode==='login'?'Login':mode==='register'?'Create Account':'Send Reset Link'}</button></form>{mode==='login'&&<><div className="or"><span/>or<span/></div><button className="create" onClick={()=>{setNotice('');setMode('register')}}><User/> Create New Account</button></>}{mode!=='login'&&<button className="back-login" onClick={()=>{setNotice('');setMode('login')}}>← Back to Login</button>}<div className="safe-box"><ShieldCheck/><b>Together, let’s build a safer<br/>digital community.</b></div></div></section></main>}
 function App(){const getRoute=()=>location.hash.slice(2)||'home';const [route,setRoute]=useState(getRoute);useEffect(()=>{const f=()=>setRoute(getRoute());addEventListener('hashchange',f);return()=>removeEventListener('hashchange',f)},[]);const [page,guide]=route.split('?')[0].split('/');const logged=Boolean(localStorage.getItem('cyberUser'));if(!logged&&page!=='login')return <Login/>;const pages={home:<Home/>,dashboard:<Dashboard/>,awareness:<Awareness/>,assistant:<Assistant/>,alerts:<Alerts/>,report:<Report/>,resources:<Resources/>,contact:<Contact/>,login:<Login/>};return page==='link-checker'?<LinkChecker/>:page==='guide'||(page==='awareness'&&guide)?<Guide name={guide}/>:pages[page]||<Home/>}
+function EnhancedAssistant() {
+  const greeting = {
+    role: 'bot',
+    text: 'Hello! I am Cyra, your Cyber Safety Assistant. You can talk to me naturally about online safety, scams, privacy, passwords, UPI payments, or cybercrime reporting.',
+    time: 'Now',
+  };
+  const [messages, setMessages] = useState([greeting]);
+  const [value, setValue] = useState('');
+  const [typing, setTyping] = useState(false);
+  const endRef = useRef(null);
+
+  useEffect(() => {
+    const messageArea = endRef.current?.parentElement;
+    if (messageArea) messageArea.scrollTop = messageArea.scrollHeight;
+  }, [messages, typing]);
+
+  const messageTime = () => new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const replyFor = (question) => {
+    const text = question.trim().toLowerCase();
+    if (/^(hi|hello|hey|hii|good morning|good evening)[!. ]*$/.test(text)) {
+      return 'Hello! It is good to have you here. I am ready to help you stay safe online. What would you like to know?';
+    }
+    if (/(who are you|what are you|your name|introduce yourself)/.test(text)) {
+      return 'I am Cyra, the Community Cyber Safety Help Desk assistant. I provide educational guidance on scams, phishing, OTP safety, UPI fraud, account security, privacy, and reporting cybercrime. For urgent money loss, call 1930 immediately.';
+    }
+    if (/(how are you|thank|thanks|good job)/.test(text)) {
+      return 'I am doing well and ready to help. Remember: a real bank, police officer, or support agent will never ask for your OTP, password, UPI PIN, or remote screen access.';
+    }
+    if (/(report|complaint|1930|money.*lost|fraud)/.test(text)) {
+      return 'If money was lost, act fast: call Cyber Helpline 1930, inform your bank or wallet using its official app/number, and keep screenshots, transaction ID, UPI ID, messages, and caller number. Then file a complaint at cybercrime.gov.in. Do not delete evidence.';
+    }
+    if (/(otp|verification code|code share)/.test(text)) {
+      return 'Never share an OTP—even with someone claiming to be from your bank, delivery service, or government office. If you already shared one, immediately change your password, contact the official service, check transactions, and call 1930 if money was debited.';
+    }
+    if (/(upi|gpay|google pay|phonepe|paytm|bank|payment|pin)/.test(text)) {
+      return 'Safe UPI rule: you enter a UPI PIN only to send money, never to receive it. Reject unknown collect requests, verify the recipient name before paying, and never install screen-sharing apps for a stranger.';
+    }
+    if (/(phish|email|link|website|qr|scan)/.test(text)) {
+      return 'Phishing uses fake messages, QR codes, and websites to steal details. Check the exact sender and website spelling, do not open unexpected links or attachments, and open official websites yourself instead of using a message link.';
+    }
+    if (/(password|login|account|2fa|two factor|hack)/.test(text)) {
+      return 'Use a different long passphrase for every important account, turn on two-factor authentication, and update recovery email/phone details. If an account is compromised, change its password from a trusted device and sign out of unknown sessions.';
+    }
+    if (/(instagram|whatsapp|facebook|social media|profile)/.test(text)) {
+      return 'Keep social accounts private, review who can message or tag you, and do not trust a familiar profile without verifying it through another channel. Scammers often copy profile photos and names to impersonate friends.';
+    }
+    if (/(safe|online safety|cyber safety|tips|help)/.test(text)) {
+      return 'My quick safety checklist: pause before clicking, verify independently, keep software updated, use unique passwords with two-factor authentication, and never share OTPs, UPI PINs, CVVs, or screen access.';
+    }
+    return 'I am happy to chat, but I am specialised in cyber safety. Ask me about phishing, OTP scams, safe UPI payments, social-media safety, passwords, suspicious links, or how to report cyber fraud.';
+  };
+
+  const sendMessage = (question) => {
+    const clean = question.trim();
+    if (!clean || typing) return;
+    setMessages((current) => [...current, { role: 'user', text: clean, time: messageTime() }]);
+    setValue('');
+    setTyping(true);
+    window.setTimeout(() => {
+      setMessages((current) => [...current, { role: 'bot', text: replyFor(clean), time: messageTime() }]);
+      setTyping(false);
+    }, 650);
+  };
+
+  const suggestions = ['Who are you?', 'How do I report cyber fraud?', 'What should I do after sharing my OTP?', 'Safe UPI tips?'];
+  return <ChatErrorBoundary><Inner page="assistant" title="AI Cyber Safety Assistant">
+    <div className="assistant-intro"><div><span><ShieldCheck /></span><b>Cyra · Private learning space</b><small>Friendly guidance, cyber-only expertise · For urgent fraud, call 1930.</small></div><button onClick={() => setMessages([greeting])}>Clear conversation</button></div>
+    <div className="chat premium-chat">
+      <div className="chat-top"><span className="bot-avatar"><Bot /></span><div><b>Cyra · Cyber Safety Assistant</b><small><i /> Online · Ready to help</small></div><em>Secure AI demo</em></div>
+      <div className="messages">
+        {messages.map((message, index) => <div key={`${message.time}-${index}`} className={`message ${message.role}`}><span className="message-avatar">{message.role === 'bot' ? <Bot size={16} /> : <User size={16} />}</span><p>{message.text}<small>{message.time}</small></p></div>)}
+        {typing && <div className="message bot typing"><span className="message-avatar"><Bot size={16} /></span><p><i /><i /><i /><small>Cyra is typing…</small></p></div>}
+        <div ref={endRef} />
+      </div>
+      <div className="suggestion-label">Try asking Cyra</div>
+      <div className="suggestions">{suggestions.map((question) => <button key={question} onClick={() => sendMessage(question)}>{question}</button>)}</div>
+      <form className="chat-form" onSubmit={(event) => { event.preventDefault(); sendMessage(value); }}><input value={value} onChange={(event) => setValue(event.target.value)} placeholder="Ask Cyra anything about online safety..." aria-label="Message Cyra, the cyber safety assistant" /><button disabled={typing} aria-label="Send message"><Send size={20} /></button></form>
+    </div>
+  </Inner></ChatErrorBoundary>;
+}
+
+// Replace the earlier basic demo with the conversational assistant above.
+Assistant = EnhancedAssistant;
+
 export default App;
